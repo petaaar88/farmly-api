@@ -1,5 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
+import usersRoutes from "./routes/usersRoutes.js";
+import globalErrorHandler from "./errors/globalErrorHandler.js";
 
 dotenv.config();
 
@@ -10,8 +12,10 @@ if(PORT === undefined)
 
 const app = express();
 
-app.get("/hello", (req, res) => {
-    res.send("Hello world");
-})
+app.use(express.json());
+
+app.use("/api/users", usersRoutes);
+
+app.use(globalErrorHandler);
 
 app.listen(PORT, () => console.log(`Farmly API listening on port ${PORT}...`))
