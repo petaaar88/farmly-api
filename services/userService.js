@@ -3,15 +3,17 @@ import ValidationError from "../errors/validationError.js";
 import { BaseError } from "sequelize";
 import User from "../models/user.js";
 import { createJwt } from "../utils/jwtUtils.js";
+import { hashPassword } from "../utils/hashingUtils.js";
 
 const createUser = async (newUserDto) => {
     try{
-        const value = await newUserSchema.validateAsync(newUserDto, {
+        const newUserData = await newUserSchema.validateAsync(newUserDto, {
             abortEarly: false,
             stripUnknown: true
         });
 
-        const user =  await User.create(value);
+        newUserData.password = await hashPassword(newUserData.password); 
+        const user =  await User.create(newUserData);
         const token = createJwt({ id: user.dataValues.id })
         
         return token;
