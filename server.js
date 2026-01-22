@@ -2,13 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import usersRoutes from "./routes/usersRoutes.js";
 import globalErrorHandler from "./errors/globalErrorHandler.js";
+import sequelize from "./config/database.js";
 
 dotenv.config();
 
 const PORT = process.env.PORT;
 
-if(PORT === undefined)
-    throw new Error("Port is not defined!");
+if(PORT === undefined) throw new Error("Port is not defined!");
 
 const app = express();
 
@@ -18,4 +18,16 @@ app.use("/api/users", usersRoutes);
 
 app.use(globalErrorHandler);
 
-app.listen(PORT, () => console.log(`Farmly API listening on port ${PORT}...`))
+const startServer = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Database connected!');
+
+        app.listen(PORT, () => console.log(`Farmly api running on port ${PORT}...`));
+
+    } catch (error) {
+        console.error('Unable to start server:', error);
+    }
+};
+
+startServer();
