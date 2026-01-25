@@ -1,6 +1,6 @@
 import AuthenticationError from "../errors/authenticationError.js";
 import ValidationError from "../errors/validationError.js";
-import { User } from "../models/index.js";
+import UserRepository from "../repositories/userRepository.js";
 import { validatePassword } from "../utils/hashingUtils.js";
 import { createJwt } from "../utils/jwtUtils.js";
 import { credentialsSchema } from "../validators/credentialsValidator.js";
@@ -13,7 +13,7 @@ const login = async (credentials) => {
             stripUnknown: true
         });
 
-        const user = await User.findOne({ where: { email: validatedData.email } });
+        const user = await UserRepository.findUserByEmail(validatedData.email);
 
         if (!user) throw new AuthenticationError("Invalid credentials");
 

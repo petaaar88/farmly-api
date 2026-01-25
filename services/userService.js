@@ -1,9 +1,9 @@
 import { newUserSchema } from "../validators/userValidator.js";
 import ValidationError from "../errors/validationError.js";
 import { BaseError } from "sequelize";
-import { User } from "../models/index.js";
 import { createJwt } from "../utils/jwtUtils.js";
 import { hashPassword } from "../utils/hashingUtils.js";
+import UserRepository from "../repositories/userRepository.js";
 
 const createUser = async (newUserDto) => {
     try{
@@ -13,7 +13,7 @@ const createUser = async (newUserDto) => {
         });
 
         newUserData.password = await hashPassword(newUserData.password); 
-        const user =  await User.create(newUserData);
+        const user =  await UserRepository.createUser(newUserData);
         const token = createJwt({ id: user.dataValues.id })
         
         return token;
