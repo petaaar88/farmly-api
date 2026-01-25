@@ -1,7 +1,7 @@
 import { newUserSchema } from "../validators/userValidator.js";
 import ValidationError from "../errors/validationError.js";
 import { BaseError } from "sequelize";
-import User from "../models/user.js";
+import { User } from "../models/index.js";
 import { createJwt } from "../utils/jwtUtils.js";
 import { hashPassword } from "../utils/hashingUtils.js";
 

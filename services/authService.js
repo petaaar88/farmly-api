@@ -1,6 +1,6 @@
 import AuthenticationError from "../errors/authenticationError.js";
 import ValidationError from "../errors/validationError.js";
-import User from "../models/user.js";
+import { User } from "../models/index.js";
 import { validatePassword } from "../utils/hashingUtils.js";
 import { createJwt } from "../utils/jwtUtils.js";
 import { credentialsSchema } from "../validators/credentialsValidator.js";
