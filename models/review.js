@@ -39,6 +39,15 @@ const Review = sequelize.define('Review', {
       model: 'users',
       key: 'id'
     }
+  },
+  chatId: {
+    type: DataTypes.BIGINT,
+    allowNull: true,
+    field: 'chat_id',
+    references: {
+      model: 'chats',
+      key: 'id'
+    }
   }
 }, {
   tableName: 'reviews',

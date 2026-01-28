@@ -31,10 +31,25 @@ const Chat = sequelize.define('Chat', {
       model: 'users',
       key: 'id'
     }
+  },
+  productId: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    field: 'product_id',
+    references: {
+      model: 'products',
+      key: 'id'
+    }
   }
 }, {
   tableName: 'chats',
-  timestamps: false
+  timestamps: false,
+  indexes: [
+    {
+      unique: true,
+      fields: ['participant1_id', 'participant2_id', 'product_id']
+    }
+  ]
 });
 
 export default Chat;

@@ -20,22 +20,26 @@ Category.hasMany(Product, { foreignKey: 'categoryId', as: 'products' });
 
 Product.belongsTo(User, { foreignKey: 'userId', as: 'seller' });
 Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
-Product.belongsToMany(User, { 
-  through: UsersFavorites, 
+Product.belongsToMany(User, {
+  through: UsersFavorites,
   foreignKey: 'productId',
   otherKey: 'userId',
-  as: 'favoritedBy' 
+  as: 'favoritedBy'
 });
+Product.hasMany(Chat, { foreignKey: 'productId', as: 'chats' });
 
 Chat.belongsTo(User, { foreignKey: 'participant1Id', as: 'participant1' });
 Chat.belongsTo(User, { foreignKey: 'participant2Id', as: 'participant2' });
+Chat.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
 Chat.hasMany(Message, { foreignKey: 'chatId', as: 'messages' });
+Chat.hasMany(Review, { foreignKey: 'chatId', as: 'reviews' });
 
 Message.belongsTo(Chat, { foreignKey: 'chatId', as: 'chat' });
 Message.belongsTo(User, { foreignKey: 'senderId', as: 'sender' });
 
 Review.belongsTo(User, { foreignKey: 'authorId', as: 'author' });
 Review.belongsTo(User, { foreignKey: 'targetId', as: 'target' });
+Review.belongsTo(Chat, { foreignKey: 'chatId', as: 'chat' });
 
 UsersFavorites.belongsTo(User, { foreignKey: 'userId' });
 UsersFavorites.belongsTo(Product, { foreignKey: 'productId' });

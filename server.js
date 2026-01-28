@@ -1,40 +1,31 @@
-import express from "express";
+import { createServer } from "http";
 import dotenv from "dotenv";
-import usersRoutes from "./routes/usersRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-import productRoutes from "./routes/productRoutes.js";
-import globalErrorHandler from "./errors/globalErrorHandler.js";
+import app from "./app.js";
 import sequelize from "./config/database.js";
+import initializeSocket from "./socket/index.js";
 
 dotenv.config();
 
-const app = express();
-
-app.use(express.json());
-
-app.use("/api/auth", authRoutes);
-app.use("/api/users", usersRoutes);
-app.use("/api/products", productRoutes);
-
-app.use(globalErrorHandler);
+const httpServer = createServer(app);
+const io = initializeSocket(httpServer);
 
 const startServer = async () => {
-    const PORT = process.env.PORT;
+  const PORT = process.env.PORT;
 
-    if (PORT === undefined) throw new Error("Port is not defined!");
+  if (PORT === undefined) throw new Error("Port is not defined!");
 
-    try {
-        await sequelize.authenticate();
-        console.log('Database connected!');
+  try {
+    await sequelize.authenticate();
+    console.log('Database connected!');
 
-        app.listen(PORT, () => console.log(`Farmly api running on port ${PORT}...`));
+    httpServer.listen(PORT, () => console.log(`Farmly api running on port ${PORT}...`));
 
-    } catch (error) {
-        console.error('Unable to start server:', error);
-    }
+  } catch (error) {
+    console.error('Unable to start server:', error);
+  }
 };
 
 if (process.env.NODE_ENV !== 'test')
-    startServer();
+  startServer();
 
-export { app, sequelize };
+export { app, httpServer, io, sequelize };
