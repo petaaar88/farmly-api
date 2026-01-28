@@ -8,10 +8,6 @@ import sequelize from "./config/database.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT;
-
-if(PORT === undefined) throw new Error("Port is not defined!");
-
 const app = express();
 
 app.use(express.json());
@@ -23,6 +19,10 @@ app.use("/api/products", productRoutes);
 app.use(globalErrorHandler);
 
 const startServer = async () => {
+    const PORT = process.env.PORT;
+
+    if (PORT === undefined) throw new Error("Port is not defined!");
+
     try {
         await sequelize.authenticate();
         console.log('Database connected!');
@@ -34,4 +34,7 @@ const startServer = async () => {
     }
 };
 
-startServer();
+if (process.env.NODE_ENV !== 'test')
+    startServer();
+
+export { app, sequelize };
