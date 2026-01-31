@@ -143,6 +143,12 @@ const getChatInfo = async (chatId, userId) => {
         id: otherParticipant.id,
         name: chatName,
         imageUrl: otherParticipant.imageUrl || null
+      },
+      product: {
+        id: chat.product.id,
+        imageUrl: chat.product.imageUrl,
+        price: chat.product.price,
+        name: chat.product.name
       }
     };
 
