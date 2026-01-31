@@ -119,6 +119,56 @@ const canUserReviewProducer = async (buyerId, producerId, reviewDelayHours = 24)
   return { canReview: false, chatId: null };
 };
 
+const getChatInfo = async (chatId, userId) => {
+  const chat = await ChatRepository.findChatInfoById(chatId);
+
+  if (!chat)
+    throw new ValidationError(["Chat not found"]);
+
+  const isParticipant = await ChatRepository.isUserParticipant(chatId, userId);
+  if (!isParticipant)
+    throw new ValidationError(["You are not a participant of this chat"]);
+
+  const isSeller = Number(chat.product.userId) === Number(userId);
+  const otherParticipant = Number(chat.participant1Id) === Number(userId)
+    ? chat.participant2
+    : chat.participant1;
+
+  const chatName = `${otherParticipant.fullName} - ${chat.product.name}`;
+
+  if (isSeller)
+    return {
+      id: chat.id,
+      user: {
+        id: otherParticipant.id,
+        name: chatName,
+        imageUrl: otherParticipant.imageUrl || null
+      }
+    };
+
+  const producerId = Number(chat.participant1Id) === Number(userId)
+    ? chat.participant2Id
+    : chat.participant1Id;
+  const { canReview } = await canUserReviewProducer(userId, producerId);
+
+  return {
+    id: chat.id,
+    user: {
+      id: otherParticipant.id,
+      name: chatName,
+      overallRating: otherParticipant.overallReview || null,
+      imageUrl: otherParticipant.imageUrl || null
+    },
+    product: {
+      id: chat.product.id,
+      imageUrl: chat.product.imageUrl,
+      price: chat.product.price,
+      name: chat.product.name
+    },
+    reviewAllowed: canReview
+  };
+};
+
 const getChatName = (chat, currentUserId) => {
   const otherParticipant = Number(chat.participant1Id) === Number(currentUserId)
     ? chat.participant2
@@ -131,6 +181,7 @@ export {
   createChat,
   getUserChats,
   getChatById,
+  getChatInfo,
   sendMessage,
   getChatMessages,
   canUserReviewProducer,

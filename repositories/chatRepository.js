@@ -62,6 +62,17 @@ class ChatRepository {
     return { chats: rows, total: count };
   }
 
+  static async findChatInfoById(chatId) {
+    const chat = await Chat.findByPk(chatId, {
+      include: [
+        { model: User, as: 'participant1', attributes: ['id', 'fullName', 'imageUrl', 'overallReview'] },
+        { model: User, as: 'participant2', attributes: ['id', 'fullName', 'imageUrl', 'overallReview'] },
+        { model: Product, as: 'product', attributes: ['id', 'name', 'imageUrl', 'price', 'userId'] }
+      ]
+    });
+    return chat;
+  }
+
   static async isUserParticipant(chatId, userId) {
     const chat = await Chat.findOne({
       where: {

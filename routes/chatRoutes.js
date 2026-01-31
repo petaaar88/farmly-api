@@ -4,6 +4,7 @@ import {
   createChatHandler,
   getUserChatsHandler,
   getChatByIdHandler,
+  getChatInfoHandler,
   sendMessageHandler,
   getChatMessagesHandler
 } from "../controllers/chatController.js";
@@ -15,6 +16,7 @@ router.use(authenticationMiddleware);
 router.post("/", createChatHandler);
 router.get("/", getUserChatsHandler);
 router.get("/:chatId", getChatByIdHandler);
+router.get("/:chatId/info", getChatInfoHandler);
 router.post("/:chatId/messages", sendMessageHandler);
 router.get("/:chatId/messages", getChatMessagesHandler);
 

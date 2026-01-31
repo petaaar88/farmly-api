@@ -2,6 +2,7 @@ import {
   createChat,
   getUserChats,
   getChatById,
+  getChatInfo,
   sendMessage,
   getChatMessages,
   getChatName
@@ -61,6 +62,11 @@ const getChatByIdHandler = async (req, res, next) => {
   });
 };
 
+const getChatInfoHandler = async (req, res, next) => {
+  const info = await getChatInfo(parseInt(req.params.chatId), req.user.id);
+  res.status(200).json(info);
+};
+
 const sendMessageHandler = async (req, res, next) => {
   const message = await sendMessage(
     parseInt(req.params.chatId),
@@ -94,6 +100,7 @@ export {
   createChatHandler,
   getUserChatsHandler,
   getChatByIdHandler,
+  getChatInfoHandler,
   sendMessageHandler,
   getChatMessagesHandler
 };
