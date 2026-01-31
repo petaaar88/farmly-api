@@ -26,14 +26,19 @@ const getUserChatsHandler = async (req, res, next) => {
 
   const { chats, total } = await getUserChats(req.user.id, limit, offset);
 
-  const chatsWithNames = chats.map(chat => ({
-    id: chat.id,
-    name: getChatName(chat, req.user.id),
-    participant1: chat.participant1,
-    participant2: chat.participant2,
-    product: chat.product,
-    createdAt: chat.createdAt
-  }));
+  const chatsWithNames = chats.map(chat => {
+    const otherParticipant = Number(chat.participant1Id) === Number(req.user.id)
+      ? chat.participant2
+      : chat.participant1;
+
+    return {
+      id: chat.id,
+      name: getChatName(chat, req.user.id),
+      imageUrl: otherParticipant.imageUrl || null,
+      lastMessage: chat.getDataValue('lastMessage') || null,
+      createdAt: chat.createdAt
+    };
+  });
 
   res.status(200).json({
     chats: chatsWithNames,

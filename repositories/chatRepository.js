@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import sequelize from '../config/database.js';
 import { Chat, Message, User, Product } from '../models/index.js';
 
 class ChatRepository {
@@ -43,14 +44,19 @@ class ChatRepository {
           { participant2Id: userId }
         ]
       },
+      attributes: {
+        include: [
+          [sequelize.literal('(SELECT content FROM messages WHERE messages.chat_id = "Chat".id ORDER BY sent_at DESC LIMIT 1)'), 'lastMessage']
+        ]
+      },
       include: [
-        { model: User, as: 'participant1', attributes: ['id', 'fullName'] },
-        { model: User, as: 'participant2', attributes: ['id', 'fullName'] },
+        { model: User, as: 'participant1', attributes: ['id', 'fullName', 'imageUrl'] },
+        { model: User, as: 'participant2', attributes: ['id', 'fullName', 'imageUrl'] },
         { model: Product, as: 'product', attributes: ['id', 'name'] }
       ],
       limit,
       offset,
-      order: [['createdAt', 'DESC']]
+      order: [[sequelize.literal('COALESCE((SELECT sent_at FROM messages WHERE messages.chat_id = "Chat".id ORDER BY sent_at DESC LIMIT 1), "Chat".created_at)'), 'DESC']]
     });
 
     return { chats: rows, total: count };
