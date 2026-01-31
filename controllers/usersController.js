@@ -1,5 +1,5 @@
 import ValidationError from "../errors/validationError.js";
-import { createUser } from "../services/userService.js";
+import { createUser, getUserProfile } from "../services/userService.js";
 
 const registerUser = async (req, res, next) => {
 
@@ -11,4 +11,9 @@ const registerUser = async (req, res, next) => {
 }
 
 
-export { registerUser };
+const getUserProfileHandler = async (req, res, next) => {
+    const user = await getUserProfile(parseInt(req.params.userId));
+    res.status(200).json(user);
+};
+
+export { registerUser, getUserProfileHandler };

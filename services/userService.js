@@ -35,4 +35,13 @@ const createUser = async (newUserDto) => {
 }
 
 
-export { createUser };
+const getUserProfile = async (userId) => {
+    const user = await UserRepository.findUserProfileById(userId);
+
+    if (!user)
+        throw new ValidationError(["User not found"]);
+
+    return user;
+};
+
+export { createUser, getUserProfile };
