@@ -56,4 +56,62 @@ const newUserSchema = Joi.object({
   stripUnknown: true,    
 });
 
-export { newUserSchema };
+const updateUserSchema = Joi.object({
+  fullName: Joi.string()
+    .min(3)
+    .max(30)
+    .messages({
+      "string.base": "Full name must be a string",
+      "string.empty": "Full name cannot be empty",
+      "string.min": "Full name must be at least 3 characters long",
+      "string.max": "Full name must be at most 30 characters long"
+    }),
+  city: Joi.string()
+    .min(2)
+    .max(50)
+    .messages({
+      "string.base": "City must be a string",
+      "string.empty": "City cannot be empty",
+      "string.min": "City must be at least 2 characters long",
+      "string.max": "City must be at most 50 characters long"
+    }),
+  phoneNumber: Joi.string()
+    .pattern(/^[0-9+\-\s()]{6,20}$/)
+    .messages({
+      "string.base": "Phone number must be a string",
+      "string.pattern.base": "Phone number format is invalid"
+    }),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .messages({
+      "string.base": "Email must be a string",
+      "string.email": "Email must be a valid email address",
+      "string.empty": "Email cannot be empty"
+    }),
+  password: Joi.string()
+    .min(5)
+    .max(30)
+    .messages({
+      "string.base": "Password must be a string",
+      "string.min": "Password must be at least 5 characters long",
+      "string.max": "Password must be at most 30 characters long",
+      "string.empty": "Password cannot be empty"
+    }),
+  description: Joi.string()
+    .max(500)
+    .allow("")
+    .messages({
+      "string.base": "Description must be a string",
+      "string.max": "Description must be at most 500 characters long"
+    })
+})
+.min(1)
+.options({
+  abortEarly: false,
+  stripUnknown: true
+})
+.messages({
+  "object.min": "At least one field is required"
+});
+
+export { newUserSchema, updateUserSchema };
