@@ -13,7 +13,7 @@ class UserRepository {
 
   static async findUserProfileById(userId) {
     const user = await User.findByPk(userId, {
-      attributes: ['id', 'fullName', 'email', 'imageUrl', 'city', 'phoneNumber', 'description', 'overallReview', 'numberOfReviews']
+      attributes: ['fullName', 'email', 'city', 'phoneNumber', 'description']
     });
     return user;
   }

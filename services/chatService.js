@@ -2,6 +2,7 @@ import { createChatSchema, sendMessageSchema } from "../validators/chatValidator
 import ValidationError from "../errors/validationError.js";
 import ChatRepository from "../repositories/chatRepository.js";
 import UserRepository from "../repositories/userRepository.js";
+import ReviewRepository from "../repositories/reviewRepository.js";
 import { Product } from "../models/index.js";
 
 const createChat = async (userId, chatDto) => {
@@ -112,8 +113,13 @@ const canUserReviewProducer = async (buyerId, producerId, reviewDelayHours = 24)
 
     const hoursSinceResponse = (Date.now() - new Date(producerResponse.sentAt)) / (1000 * 60 * 60);
 
-    if (hoursSinceResponse >= reviewDelayHours)
+    if (hoursSinceResponse >= reviewDelayHours) {
+      const existingReview = await ReviewRepository.findReviewByChatId(chat.id);
+      if (existingReview)
+        continue;
+
       return { canReview: true, chatId: chat.id };
+    }
   }
 
   return { canReview: false, chatId: null };

@@ -3,26 +3,51 @@ import {
   createProduct,
   getAllProducts,
   getProductsByUserId,
+  getProductById,
   updateProduct,
   deleteProduct
 } from '../services/productService.js';
 
 const getPagination = (req) => {
-  const page = req.query.page === undefined ? 1 : parseInt(req.query.page);
-  const limit = req.query.limit === undefined ? 10 : parseInt(req.query.limit);
+  const limit = req.query.limit === undefined ? 50 : parseInt(req.query.limit);
+  const offset = req.query.offset === undefined ? 0 : parseInt(req.query.offset);
 
-  if (Number.isNaN(page) || Number.isNaN(limit))
+  if (Number.isNaN(limit) || Number.isNaN(offset))
     throw new ValidationError(['Invalid pagination parameters']);
-  if (page < 1 || limit < 1)
-    throw new ValidationError(['Page and limit must be positive numbers']);
+  if (limit < 1 || offset < 0)
+    throw new ValidationError(['Limit must be positive and offset must be non-negative']);
 
-  const offset = (page - 1) * limit;
-  return { page, limit, offset };
+  return { limit, offset };
 };
+
+const mapProducer = (seller) => ({
+  id: seller.id,
+  fullName: seller.fullName,
+  city: seller.city,
+  overallReview: {
+    numberOfReviews: seller.numberOfReviews == null ? 0 : Number(seller.numberOfReviews),
+    overallReview: seller.overallReview == null ? null : Number(seller.overallReview)
+  }
+});
+
+const mapProductListItem = (product) => ({
+  id: product.id,
+  name: product.name,
+  price: product.price,
+  imageUrl: product.imageUrl,
+  producer: mapProducer(product.seller)
+});
+
+const mapProductDetail = (product) => ({
+  producer: mapProducer(product.seller),
+  imageUrl: product.imageUrl,
+  name: product.name,
+  price: product.price,
+  description: product.description
+});
 
 const createNewProduct = async (req, res, next) => {
   if (!req.body) throw new ValidationError('Request body is required');
-  
 
   const productData = {
     name: req.body.name,
@@ -37,15 +62,15 @@ const createNewProduct = async (req, res, next) => {
 };
 
 const getAllProductsHandler = async (req, res, next) => {
-  const { page, limit, offset } = getPagination(req);
+  const { limit, offset } = getPagination(req);
 
   const { products, total } = await getAllProducts(limit, offset);
 
   res.status(200).json({
-    products,
+    products: products.map(mapProductListItem),
     total,
-    page,
-    limit
+    limit,
+    offset
   });
 };
 
@@ -53,15 +78,29 @@ const getUserProductsHandler = async (req, res, next) => {
   const userId = parseInt(req.params.userid);
   if (Number.isNaN(userId)) throw new ValidationError(['Invalid user id']);
 
-  const { page, limit, offset } = getPagination(req);
+  const { limit, offset } = getPagination(req);
   const { products, total } = await getProductsByUserId(userId, limit, offset);
 
   res.status(200).json({
-    products,
+    products: products.map(mapProductListItem),
     total,
-    page,
-    limit
+    limit,
+    offset
   });
+};
+
+const getUserProductDetailsHandler = async (req, res, next) => {
+  const userId = parseInt(req.params.userid);
+  const productId = parseInt(req.params.productId);
+
+  if (Number.isNaN(userId)) throw new ValidationError(['Invalid user id']);
+  if (Number.isNaN(productId)) throw new ValidationError(['Invalid product id']);
+
+  const product = await getProductById(productId);
+  if (!product || Number(product.userId) !== Number(userId))
+    throw new ValidationError(['Product not found']);
+
+  res.status(200).json(mapProductDetail(product));
 };
 
 const updateProductHandler = async (req, res, next) => {
@@ -93,6 +132,7 @@ export {
   createNewProduct,
   getAllProductsHandler,
   getUserProductsHandler,
+  getUserProductDetailsHandler,
   updateProductHandler,
   deleteProductHandler
 };

@@ -4,7 +4,13 @@ import { getAllCategories, createCategory } from '../services/categoryService.js
 const getAllCategoriesHandler = async (req, res, next) => {
   const categories = await getAllCategories();
 
-  res.status(200).json(categories);
+  res.status(200).json({
+    categories: categories.map(category => ({
+      id: category.id,
+      name: category.name,
+      imageUrl: category.imageUrl || null
+    }))
+  });
 };
 
 const createCategoryHandler = async (req, res, next) => {

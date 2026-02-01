@@ -47,6 +47,10 @@ const getProductsByUserId = async (userId, limit, offset) => {
   return ProductRepository.findProductsByUserId(userId, limit, offset);
 };
 
+const getProductById = async (productId) => {
+  return ProductRepository.findProductById(productId);
+};
+
 const updateProduct = async (productId, updateData, imageFile, userId) => {
   const product = await ProductRepository.findProductById(productId);
   if (!product) throw new ValidationError(['Product not found']);
@@ -100,6 +104,7 @@ export {
   createProduct,
   getAllProducts,
   getProductsByUserId,
+  getProductById,
   updateProduct,
   deleteProduct
 };

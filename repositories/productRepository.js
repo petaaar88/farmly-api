@@ -9,7 +9,7 @@ class ProductRepository {
   static async findProductById(productId) {
     const product = await Product.findByPk(productId, {
       include: [
-        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city'] },
+        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city', 'numberOfReviews', 'overallReview'] },
         { model: Category, as: 'category', attributes: ['id', 'name'] }
       ]
     });
@@ -21,7 +21,7 @@ class ProductRepository {
       limit,
       offset,
       include: [
-        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city'] },
+        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city', 'numberOfReviews', 'overallReview'] },
         { model: Category, as: 'category', attributes: ['id', 'name'] }
       ]
     });
@@ -38,7 +38,7 @@ class ProductRepository {
       limit,
       offset,
       include: [
-        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city'] },
+        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city', 'numberOfReviews', 'overallReview'] },
         { model: Category, as: 'category', attributes: ['id', 'name'] }
       ]
     });
