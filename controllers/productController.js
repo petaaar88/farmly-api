@@ -23,6 +23,7 @@ const getPagination = (req) => {
 const mapProducer = (seller) => ({
   id: seller.id,
   fullName: seller.fullName,
+  imageUrl: seller.imageUrl,
   city: seller.city,
   overallReview: {
     numberOfReviews: seller.numberOfReviews == null ? 0 : Number(seller.numberOfReviews),

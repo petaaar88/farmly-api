@@ -21,7 +21,7 @@ class ProductRepository {
       limit,
       offset,
       include: [
-        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city', 'numberOfReviews', 'overallReview'] },
+        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city', 'numberOfReviews', 'overallReview', 'imageUrl'] },
         { model: Category, as: 'category', attributes: ['id', 'name'] }
       ]
     });
