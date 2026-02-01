@@ -108,10 +108,10 @@ class ChatRepository {
       ],
       limit,
       offset,
-      order: [['sentAt', 'ASC']]
+      order: [['sentAt', 'DESC']]
     });
 
-    return { messages: rows, total: count };
+    return { messages: rows.reverse(), total: count };
   }
 
   static async findProducerFirstResponse(chatId, producerId) {
