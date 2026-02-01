@@ -13,13 +13,7 @@ const registerUser = async (req, res, next) => {
 
 const getUserProfileHandler = async (req, res, next) => {
     const user = await getUserProfile(parseInt(req.params.userId));
-    res.status(200).json({
-        fullName: user.fullName,
-        email: user.email,
-        city: user.city,
-        phoneNumber: user.phoneNumber,
-        description: user.description
-    });
+    res.status(200).json(user);
 };
 
 export { registerUser, getUserProfileHandler };
