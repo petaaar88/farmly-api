@@ -10,6 +10,11 @@ class CategoryRepository {
     const categories = await Category.findAll();
     return categories;
   }
+
+  static async createCategory(categoryData) {
+    const category = await Category.create(categoryData);
+    return category;
+  }
 }
 
 export default CategoryRepository;

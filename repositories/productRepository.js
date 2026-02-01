@@ -32,14 +32,21 @@ class ProductRepository {
     };
   }
 
-  static async findProductsByUserId(userId) {
-    const products = await Product.findAll({
+  static async findProductsByUserId(userId, limit = 10, offset = 0) {
+    const { count, rows } = await Product.findAndCountAll({
       where: { userId },
+      limit,
+      offset,
       include: [
+        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city'] },
         { model: Category, as: 'category', attributes: ['id', 'name'] }
       ]
     });
-    return products;
+
+    return {
+      products: rows,
+      total: count
+    };
   }
 
   static async updateProduct(productId, updateData) {

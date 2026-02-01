@@ -9,9 +9,9 @@ const generateFileName = (originalName) => {
   return `${uniqueId}.${extension}`;
 };
 
-const uploadImage = async (file) => {
+const uploadImage = async (file, folder = 'products') => {
   const fileName = generateFileName(file.originalname);
-  const filePath = `products/${fileName}`;
+  const filePath = `${folder}/${fileName}`;
 
   const { data, error } = await supabase.storage
     .from(BUCKET_NAME)

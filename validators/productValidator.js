@@ -46,4 +46,40 @@ const createProductSchema = Joi.object({
   stripUnknown: true
 });
 
-export { createProductSchema };
+const updateProductSchema = Joi.object({
+  name: Joi.string()
+    .min(2)
+    .max(100)
+    .messages({
+      'string.base': 'Name must be a string',
+      'string.min': 'Name must be at least 2 characters long',
+      'string.max': 'Name must be at most 100 characters long'
+    }),
+  description: Joi.string()
+    .min(10)
+    .max(2000)
+    .messages({
+      'string.base': 'Description must be a string',
+      'string.min': 'Description must be at least 10 characters long',
+      'string.max': 'Description must be at most 2000 characters long'
+    }),
+  price: Joi.number()
+    .positive()
+    .messages({
+      'number.base': 'Price must be a number',
+      'number.positive': 'Price must be a positive number'
+    }),
+  categoryId: Joi.number()
+    .integer()
+    .positive()
+    .messages({
+      'number.base': 'Category ID must be a number',
+      'number.integer': 'Category ID must be an integer',
+      'number.positive': 'Category ID must be a positive number'
+    })
+}).min(1).options({
+  abortEarly: false,
+  stripUnknown: true
+});
+
+export { createProductSchema, updateProductSchema };
