@@ -9,7 +9,7 @@ class ProductRepository {
   static async findProductById(productId) {
     const product = await Product.findByPk(productId, {
       include: [
-        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city', 'numberOfReviews', 'overallReview'] },
+        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city', 'numberOfReviews', 'overallReview', "imageUrl"] },
         { model: Category, as: 'category', attributes: ['id', 'name'] }
       ]
     });
