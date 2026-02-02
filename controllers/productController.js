@@ -44,7 +44,8 @@ const mapProductDetail = (product) => ({
   imageUrl: product.imageUrl,
   name: product.name,
   price: product.price,
-  description: product.description
+  description: product.description,
+  id: product.id
 });
 
 const createNewProduct = async (req, res, next) => {
@@ -91,14 +92,12 @@ const getUserProductsHandler = async (req, res, next) => {
 };
 
 const getUserProductDetailsHandler = async (req, res, next) => {
-  const userId = parseInt(req.params.userid);
   const productId = parseInt(req.params.productId);
 
-  if (Number.isNaN(userId)) throw new ValidationError(['Invalid user id']);
   if (Number.isNaN(productId)) throw new ValidationError(['Invalid product id']);
 
   const product = await getProductById(productId);
-  if (!product || Number(product.userId) !== Number(userId))
+  if (!product)
     throw new ValidationError(['Product not found']);
 
   res.status(200).json(mapProductDetail(product));

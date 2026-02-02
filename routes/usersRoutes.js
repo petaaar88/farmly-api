@@ -10,7 +10,7 @@ router.post("/register", registerUser);
 router.patch("/profile", authenticationMiddleware, upload.single("image"), updateUserProfileHandler);
 router.get("/:userId/profile", getUserProfileHandler);
 router.get("/:userid/products", getUserProductsHandler);
-router.get("/:userid/products/:productId", getUserProductDetailsHandler);
+router.get("/products/:productId", getUserProductDetailsHandler);
 
 
 export default router;
