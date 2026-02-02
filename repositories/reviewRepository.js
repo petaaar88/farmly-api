@@ -27,6 +27,27 @@ class ReviewRepository {
       avg: stats && stats.avg != null ? parseFloat(stats.avg) : null
     };
   }
+
+  static async getUserReviewsPaginated(userId, limit = 50, offset = 0) {
+    const { count, rows } = await Review.findAndCountAll({
+      where: { targetId: userId },
+      include: [
+        {
+          model: sequelize.models.User,
+          as: 'author',
+          attributes: ['id', 'fullName', 'imageUrl', 'overallReview']
+        }
+      ],
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']]
+    });
+
+    return {
+      reviews: rows,
+      total: count
+    };
+  }
 }
 
 export default ReviewRepository;

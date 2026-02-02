@@ -51,4 +51,36 @@ const createReview = async (authorId, reviewDto) => {
   };
 };
 
-export { createReview };
+const getUserReviews = async (userId, limit = 50, offset = 0) => {
+  const user = await UserRepository.findUserById(userId);
+  if (!user) throw new ValidationError(['User not found']);
+
+  const validatedLimit = Math.min(Math.max(1, parseInt(limit) || 50), 100);
+  const validatedOffset = Math.max(0, parseInt(offset) || 0);
+
+  const { reviews, total } = await ReviewRepository.getUserReviewsPaginated(
+    userId,
+    validatedLimit,
+    validatedOffset
+  );
+
+  const transformedReviews = reviews.map(review => ({
+    id: String(review.id),
+    content: review.content,
+    user: {
+      id: String(review.author.id),
+      fullName: review.author.fullName,
+      imageUrl: review.author.imageUrl,
+      rating: review.grade
+    }
+  }));
+
+  return {
+    reviews: transformedReviews,
+    total,
+    limit: validatedLimit,
+    offset: validatedOffset
+  };
+};
+
+export { createReview, getUserReviews };

@@ -1,6 +1,7 @@
 import express from "express";
 import { registerUser, getUserProfileHandler, updateUserProfileHandler } from "../controllers/usersController.js";
 import { getUserProductsHandler, getUserProductDetailsHandler } from "../controllers/productController.js";
+import { getUserReviewsHandler } from "../controllers/reviewController.js";
 import { authenticationMiddleware } from "../middlewares/authMiddleware.js";
 import { upload } from "../middlewares/uploadMiddleware.js";
 
@@ -11,6 +12,7 @@ router.patch("/profile", authenticationMiddleware, upload.single("image"), updat
 router.get("/:userId/profile", getUserProfileHandler);
 router.get("/:userid/products", getUserProductsHandler);
 router.get("/products/:productId", getUserProductDetailsHandler);
+router.get("/:userId/reviews", getUserReviewsHandler);
 
 
 export default router;
