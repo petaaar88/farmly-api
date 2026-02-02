@@ -39,8 +39,8 @@ const createProduct = async (productData, imageFile, userId) => {
   return ProductRepository.findProductById(product.id);
 };
 
-const getAllProducts = async (limit, offset) => {
-  return ProductRepository.findAllProducts(limit, offset);
+const getAllProducts = async (limit, offset, filters = {}) => {
+  return ProductRepository.findAllProducts(limit, offset, filters);
 };
 
 const getProductsByUserId = async (userId, limit, offset) => {

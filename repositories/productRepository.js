@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { Product, User, Category } from '../models/index.js';
 
 class ProductRepository {
@@ -16,12 +17,38 @@ class ProductRepository {
     return product;
   }
 
-  static async findAllProducts(limit = 10, offset = 0) {
+  static async findAllProducts(limit = 10, offset = 0, filters = {}) {
+    const where = {};
+
+    if (filters.priceFrom !== undefined || filters.priceTo !== undefined) {
+      where.price = {};
+      if (filters.priceFrom !== undefined)
+        where.price[Op.gte] = filters.priceFrom;
+      if (filters.priceTo !== undefined)
+        where.price[Op.lte] = filters.priceTo;
+    }
+
+    if (filters.categoryId !== undefined)
+      where.categoryId = filters.categoryId;
+
+    if (filters.value)
+      where.name = { [Op.iLike]: `%${filters.value}%` };
+
+    const sellerInclude = {
+      model: User,
+      as: 'seller',
+      attributes: ['id', 'fullName', 'city', 'numberOfReviews', 'overallReview', 'imageUrl']
+    };
+
+    if (filters.city)
+      sellerInclude.where = { city: { [Op.iLike]: `%${filters.city}%` } };
+
     const { count, rows } = await Product.findAndCountAll({
       limit,
       offset,
+      where,
       include: [
-        { model: User, as: 'seller', attributes: ['id', 'fullName', 'city', 'numberOfReviews', 'overallReview', 'imageUrl'] },
+        sellerInclude,
         { model: Category, as: 'category', attributes: ['id', 'name'] }
       ]
     });

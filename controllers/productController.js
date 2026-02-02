@@ -20,6 +20,65 @@ const getPagination = (req) => {
   return { limit, offset };
 };
 
+const getQueryString = (value) => {
+  if (Array.isArray(value)) value = value[0];
+  if (typeof value !== 'string') return undefined;
+
+  const trimmed = value.trim();
+  if (trimmed === '') return undefined;
+
+  return trimmed;
+};
+
+const getProductFilters = (req) => {
+  const errors = [];
+  const filters = {};
+
+  const city = getQueryString(req.query.city);
+  if (city !== undefined)
+    filters.city = city;
+
+  const value = getQueryString(req.query.value);
+  if (value !== undefined)
+    filters.value = value;
+
+  const priceFromRaw = getQueryString(req.query.priceFrom);
+  if (priceFromRaw !== undefined) {
+    const priceFrom = parseFloat(priceFromRaw);
+    if (Number.isNaN(priceFrom))
+      errors.push('Invalid priceFrom');
+    else
+      filters.priceFrom = priceFrom;
+  }
+
+  const priceToRaw = getQueryString(req.query.priceTo);
+  if (priceToRaw !== undefined) {
+    const priceTo = parseFloat(priceToRaw);
+    if (Number.isNaN(priceTo))
+      errors.push('Invalid priceTo');
+    else
+      filters.priceTo = priceTo;
+  }
+
+  const categoryIdRaw = getQueryString(req.query.categoryId);
+  if (categoryIdRaw !== undefined) {
+    const categoryId = parseInt(categoryIdRaw);
+    if (Number.isNaN(categoryId))
+      errors.push('Invalid categoryId');
+    else
+      filters.categoryId = categoryId;
+  }
+
+  if (filters.priceFrom !== undefined && filters.priceTo !== undefined
+    && filters.priceFrom > filters.priceTo)
+    errors.push('priceFrom must be less than or equal to priceTo');
+
+  if (errors.length > 0)
+    throw new ValidationError(errors);
+
+  return filters;
+};
+
 const mapProducer = (seller) => ({
   id: seller.id,
   fullName: seller.fullName,
@@ -65,8 +124,9 @@ const createNewProduct = async (req, res, next) => {
 
 const getAllProductsHandler = async (req, res, next) => {
   const { limit, offset } = getPagination(req);
+  const filters = getProductFilters(req);
 
-  const { products, total } = await getAllProducts(limit, offset);
+  const { products, total } = await getAllProducts(limit, offset, filters);
 
   res.status(200).json({
     products: products.map(mapProductListItem),
