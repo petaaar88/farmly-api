@@ -34,11 +34,24 @@ const removeFavoriteHandler = async (req, res, next) => {
   }
 };
 
+const getPagination = (req) => {
+  const limit = req.query.limit === undefined ? 10 : parseInt(req.query.limit);
+  const offset = req.query.offset === undefined ? 0 : parseInt(req.query.offset);
+
+  if (Number.isNaN(limit) || Number.isNaN(offset))
+    throw new ValidationError(['Invalid pagination parameters']);
+  if (limit < 1 || offset < 0)
+    throw new ValidationError(['Limit must be positive and offset must be non-negative']);
+
+  return { limit, offset };
+};
+
 const getFavoritesHandler = async (req, res, next) => {
   try {
-    const favorites = await getUserFavoritesProducts(req.user.id);
+    const { limit, offset } = getPagination(req);
+    const result = await getUserFavoritesProducts(req.user.id, limit, offset);
 
-    res.json(favorites);
+    res.json(result);
   } catch (err) {
     next(err);
   }

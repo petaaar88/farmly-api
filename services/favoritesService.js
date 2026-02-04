@@ -22,13 +22,15 @@ const removeFavoriteProduct = async (userId, productId) => {
   return { message: 'Product removed from favorites' };
 };
 
-const getUserFavoritesProducts = async (userId) => {
-  const user = await FavoritesRepository.getUserFavorites(userId);
+const getUserFavoritesProducts = async (userId, limit = 10, offset = 0) => {
+  const { products, count } = await FavoritesRepository.getUserFavorites(userId, limit, offset);
 
-  if (!user)
-    throw new ValidationError(['User not found']);
-
-  return user.favorites;
+  return {
+    products,
+    total: count,
+    limit,
+    offset
+  };
 };
 
 export { addFavoriteProduct, removeFavoriteProduct, getUserFavoritesProducts };

@@ -15,17 +15,28 @@ class FavoritesRepository {
     return deletedCount > 0;
   }
 
-  static async getUserFavorites(userId) {
-    const user = await User.findByPk(userId, {
-      include: [{
-        model: Product,
-        as: 'favorites',
-        include: [
-          { model: User, as: 'seller', attributes: ['id', 'fullName', 'imageUrl'] }
-        ]
-      }]
+  static async getUserFavorites(userId, limit = 10, offset = 0) {
+    const { count, rows } = await Product.findAndCountAll({
+      include: [
+        {
+          model: User,
+          as: 'favoritedBy',
+          where: { id: userId },
+          attributes: [],
+          through: { attributes: [] }
+        },
+        {
+          model: User,
+          as: 'seller',
+          attributes: ['id', 'fullName', 'imageUrl', 'city', 'numberOfReviews', 'overallReview']
+        }
+      ],
+      limit,
+      offset,
+      distinct: true
     });
-    return user;
+
+    return { products: rows, count };
   }
 
   static async isProductFavorited(userId, productId) {
