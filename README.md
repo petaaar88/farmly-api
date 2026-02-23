@@ -1,4 +1,4 @@
-# Farmly REST API
+# Farmly API
 
 A RESTful backend for an online farmers market platform that connects consumers with local producers. Built with Express 5, PostgreSQL, and Socket.io for real-time messaging.
 
@@ -256,8 +256,6 @@ farmly-rest-api/
 - **Chat-gated Reviews** — Requiring an existing chat before a review can be submitted prevents spam and ensures buyers have actually interacted with the producer
 - **Product-scoped Chats** — Each chat is tied to a specific product, giving context to conversations and preventing duplicate chat creation
 - **Supabase Storage** — Image uploads go through Multer (memory storage) to Supabase Storage, keeping the server stateless
-- **Express 5** — Early adoption of Express 5 with native async error handling support
 
-## License
 
-This project is open source and available under the [MIT License](LICENSE).
+
